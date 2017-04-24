@@ -1,0 +1,4 @@
+coreutilのディレクトリは ~/syspro/coreutils-8.9 にある状態で実行
+
+入力は　
+$ ./file.sh

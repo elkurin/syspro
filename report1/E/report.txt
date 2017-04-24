@@ -1,0 +1,8 @@
+catの出力をとる
+$ strace /bin/cat /proc/meminfo > cat.txt
+
+straceの出力をとる
+$ strace /bin/cat /proc/meminfo 2> strace.txt
+
+両方の出力をとる
+$ strace /bin/cat /proc/meminfo > both.txt 2>&1

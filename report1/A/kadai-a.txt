@@ -1,0 +1,45 @@
+コードの内容を変えずにMakefileを作成して一度コンパイルすると以下のようになった
+
+(Input) $ make
+(Output)
+gcc -Wall -c a.c
+a.c: In function ‘main’:
+a.c:9:2: warning: implicit declaration of function ‘mystrcmp’ [-Wimplicit-function-declaration]
+  if (mystrcmp(s, a) < 0)
+  ^
+a.c:10:3: warning: format not a string literal and no format arguments [-Wformat-security]
+   printf(s);
+   ^
+a.c:12:3: warning: format not a string literal and no format arguments [-Wformat-security]
+   printf(a);
+   ^
+a.c:13:1: warning: control reaches end of non-void function [-Wreturn-type]
+ }
+ ^
+gcc -Wall -c b.c
+gcc -Wall -c c.c
+gcc a.o b.o c.o -o kadai-a
+
+a.cがmystrcmpの中身が書いてあるb.hをincludeしていないのでここを訂正
+さらにヘッダーファイルにmystrcmpが書かれていなかったのでこれを追加、また引数の型が違ったのでここも訂正
+さらにprintfの仕様がおかしかったのでこれも訂正
+
+以上のようにWarningを直してコンパイルしなおすと以下のようになった
+(Input) $ ./kadai-a
+(Output) 
+Hello, C world!
+
+
+After
+(Input) $ make
+(Output)
+gcc -Wall -c a.c
+gcc -Wall -c b.c
+gcc -Wall -c c.c
+gcc a.o b.o c.o -o kadai-a
+
+
+(Input) $ ./kadai-a
+(Output)
+Hello, C world!
+

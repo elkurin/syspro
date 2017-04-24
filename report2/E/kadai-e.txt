@@ -1,0 +1,22 @@
+ls -lをls.cに実装した
+
+このディレクトリで(kadai-e.txtが無い状態で)このls.cを実行すると以下のように出力される
+
+-rw-rw-r-- 1 3273 tansei tansei Fri Apr 21 13:48:16 2017
+ ls.c
+-rw-rw-r-- 1 5 tansei tansei Fri Apr 21 10:53:32 2017
+ dummy.txt
+-rwxrwxr-x 1 13498 tansei tansei Fri Apr 21 13:49:25 2017
+ a.out
+-rw-rw-r-- 1 4763 tansei tansei Fri Apr 21 13:37:09 2017
+ poyo.txt
+
+情報の出力の順番はls -lのコマンドに準拠
+
+まずディレクトリならd, そうでないなら-
+permissionはst_modeの8進数の下3桁に対応するので、それを確認
+次はリンクの数をst_nlinkで出力
+次にファイルサイズをst_sizeで確認
+つぎのuid, gidは、st_uid,st_gidで番号が分かるので、その番号に対応するユーザー名が分かる/etc/passwdを開いて、ユーザー名を検索し出力
+時間はst_mtime(last modifiedの時間)を出力
+最後にファイル名を書いて終わり

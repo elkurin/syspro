@@ -1,0 +1,3 @@
+hoge.shをkadai-dディレクトリに置いて実行
+
+$ ./hoge.sh
