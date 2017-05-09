@@ -16,14 +16,22 @@ void *server(void *arg)
 	int s, ss = *(int *)arg;
 	struct sockaddr_in clientAddr;
 	unsigned int clientAddrLength;
-	char echoBuffer[SIZE];
+	char echoBuffer[SIZE + 1];
 	int receivedMessageSize;
 	int sendMessageSize;
 
 	while(1) {
-		s = accept(ss, (struct sockaddr *)&clientAddr, &clientAddrLength);
-		memset(echoBuffer, 0, sizeof(echoBuffer));
 		clientAddrLength = sizeof(clientAddr);
+		s = accept(ss, (struct sockaddr *)&clientAddr, &clientAddrLength);
+		if (s < 0) {
+			perror("accept() failed\n");
+			exit(EXIT_FAILURE);
+		}
+		if (write(s, "Welcome!\n", 9) < 0) {
+			perror("write() faileld\n");
+			exit(EXIT_FAILURE);
+		}
+		memset(echoBuffer, '\0', sizeof(echoBuffer));
 		receivedMessageSize = read(s, echoBuffer, SIZE);
 		if (receivedMessageSize < 0) {
 			perror("read() failed\n");
@@ -57,7 +65,7 @@ int main(int argc, char* args[])
 		perror("socket() failed\n");
 		exit(EXIT_FAILURE);
 	}
-	memset(&serverAddr, 0, sizeof(serverAddr));
+	memset(&serverAddr, '\0', sizeof(serverAddr));
 	serverAddr.sin_family = AF_INET;
 	serverAddr.sin_addr.s_addr = htonl(INADDR_ANY);
 	serverAddr.sin_port = htons(serverPort);
@@ -68,7 +76,10 @@ int main(int argc, char* args[])
 		exit(EXIT_FAILURE);
 	}
 
-	listen(sock, 100);
+	if (listen(sock, 100) < 0) {
+		perror("listen() failed\n");
+		exit(EXIT_FAILURE);
+	}
 	
 	int i;
 	pthread_t thread[thread_num];

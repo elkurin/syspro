@@ -14,17 +14,16 @@ double gettime(void)
 int main(void)
 {
 	double tstart, tend;
-	pid_t p;
 	
 	tstart = gettime();
-	p = getpid();
+	getpid();
 	tend = gettime();
 
 	printf("%f\n", tend - tstart);
 
 	tstart = gettime();
 	int i;
-	for (i = 0; i < 1000; i++) p = getpid();
+	for (i = 0; i < 1000; i++) getpid();
 	tend = gettime();
 
 	printf("%f\n", tend - tstart);

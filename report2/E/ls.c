@@ -7,16 +7,21 @@
 #include <unistd.h>
 #include <string.h>
 #include <time.h>
+#include <ctype.h>
 
 void IntToString(char *str, int number)
 {
 	sprintf(str, "%d", number);
 }
 
-int main(void)
+int main(int argc, char* argv[])
 {
+	if (argc != 2) {
+		printf("Path is not set.\n");
+		exit(EXIT_FAILURE);
+	}
 	DIR *dir;
-	char *path = ".";
+	char *path = argv[1];
 	if ((dir = opendir(path)) == NULL) {
 		perror(NULL);
 		printf("ERROR : Failed to open directory.\n");
@@ -28,7 +33,8 @@ int main(void)
 		if (get->d_type == DT_DIR) continue;
 		struct stat *buf;
 		buf = (struct stat *)malloc(sizeof(struct stat));
-		char pathname[1000] = "./";
+		char pathname[1000];
+		strcpy(pathname, argv[1]);
 		strcat(pathname, get->d_name);
 		if (stat(pathname, buf) == - 1) {
 			perror(NULL);

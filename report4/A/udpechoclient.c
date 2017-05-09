@@ -48,8 +48,8 @@ int main(int argc, char* args[])
 	addr.sin_port = htons(serverPort);
 
 	while(1) {
-		memset(sendBuffer, 0, sizeof(sendBuffer));
-		memset(echoBuffer, 0, sizeof(echoBuffer));
+		memset(sendBuffer, '\0', sizeof(sendBuffer));
+		memset(echoBuffer, '\0', sizeof(echoBuffer));
 		addrLength = sizeof(addr);
 		scanf("%s", sendBuffer);
 		if (sendBuffer[0] == EOF) break;

@@ -40,7 +40,7 @@ int wc(const char *pathname)
 	return 0;
 }
 
-int main(void)
+int main(int argc, char *argv[])
 {
-	return wc("foo.txt");
+	return wc(argv[2]);
 }

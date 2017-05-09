@@ -17,3 +17,7 @@ main.cに時間計測のコードを書いた
 $ strace ./a.out 2> strace.txt
 でstrace.txtに./a.outの動作を出力し、それを確認すると、getpid()は1度しか呼ばれていないように見える
 
+
+-----再提出の修正箇所-----
+pid_t p を消した
+getpid()関数の返り値を無視しても問題はなくwarningも出ない

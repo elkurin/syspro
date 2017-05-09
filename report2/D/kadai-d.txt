@@ -1,4 +1,8 @@
 wc.cに実装した
+
+./wc wc "ファイル名"
+でカウントできる
+
 int wc(const char *pathname);
 でwcを実行する
 単語の区切りは改行、スペース、タブとした

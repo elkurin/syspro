@@ -4,6 +4,8 @@
 #include <errno.h>
 #include <sys/time.h>
 
+#define SIZE 1
+
 double gettime(void)
 {
 	struct timeval tv;
@@ -30,10 +32,17 @@ int cp(const char *read_name, const char *write_name, const size_t size)
 
 	char buf[size];
 	size_t get;
+	int filled = 0;
 	while(1) {
-		get = fread(buf, 1, size, read_fp);
-		if (get == 0) break;
-		fwrite(buf, 1, get, write_fp);
+		char temp1[SIZE], temp2[SIZE];
+		get = fread(temp1, 1, size - filled, read_fp);
+		strcat(buf, temp1);
+		if (get + filled == 0) break;
+		int write_size = fwrite(buf, 1, get, write_fp);
+		int i;
+		for (i = write_size; i < get; i++) temp2[i - write_size] = buf[i];
+		strcpy(buf, temp2);
+		filled = get - write_size;
 	}
 	fclose(read_fp);
 	fclose(write_fp);
@@ -42,7 +51,11 @@ int cp(const char *read_name, const char *write_name, const size_t size)
 	return EXIT_SUCCESS;
 }
 
-int main(void)
+int main(int argc, char *argv[])
 {
-	return cp("hoge.txt", "foo.txt", 1);
+	if (argc != 3) {
+		printf("Wrong number of arguments.\n");
+		exit(EXIT_FAILURE);
+	}
+	return cp(argv[1], argv[2], SIZE);
 }

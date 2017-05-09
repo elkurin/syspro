@@ -7,6 +7,7 @@
 #include <errno.h>
 #include <string.h>
 #include <sys/time.h>
+#include <string.h>
 
 #define SIZE 1
 
@@ -35,7 +36,14 @@ int cp(const char *read_pathname, const char *write_pathname)
 		return 0;
 	}
 
-	int write_fd = open(write_pathname, O_CREAT|O_RDWR, 0777);
+	struct stat *read_stat;
+	read_stat = (struct stat *)malloc(sizeof(struct stat));
+	if (stat(read_pathname, read_stat) ==  - 1) {
+		perror(NULL);
+		printf("ERROR : Failed to get status of \"%s\".\n", read_pathname);
+		return - 1;
+	}
+	int write_fd = open(write_pathname, O_CREAT|O_RDWR, read_stat->st_mode);
 	if (write_fd == - 1) {
 		perror(NULL);
 		printf("ERROR : Failed to open \"%s\".\n", write_pathname);
@@ -43,20 +51,29 @@ int cp(const char *read_pathname, const char *write_pathname)
 	}
 	
 	char buf[SIZE];
+	int filled = 0;
 	while(1) {
-		ssize_t get = read(read_fd, buf, SIZE);
+		char temp1[SIZE];
+		ssize_t get = read(read_fd, temp1, SIZE - filled);
+		strcat(buf, temp1);
 		if (get == - 1) {
 			perror(NULL);
 			printf("ERROR : Failed to read.\n");
 			return - 1;
 		}
-		if (get == 0) break;
-		if (write(write_fd, buf, get) == - 1) {
+		if (get + filled == 0) break;
+		
+		int write_size = write(write_fd, buf, get);
+		if (write_size == - 1) {
 			perror(NULL);
 			printf("ERROR : Failed to write.\n");
 			return - 1;
 		}
-		
+		char temp2[SIZE];
+		int i;
+		for (i = write_size; i < get; i++) temp2[i - write_size] = buf[i];
+		strcpy(buf, temp2);
+		filled = get - write_size;
 	}
 
 	if (close(write_fd) == - 1) {
@@ -74,11 +91,15 @@ int cp(const char *read_pathname, const char *write_pathname)
 	return 0;
 }
 
-int main(void)
+int main(int argc, char *argv[])
 {
+	if (argc != 3) {
+		printf("Wrong number of arguments.\n");
+		exit(EXIT_FAILURE);
+	}
 	double tstart, tend;
 	tstart = gettime();
-	if (cp("hoge.txt", "dummy.txt") == - 1) {
+	if (cp(argv[1], argv[2]) == - 1) {
 		printf("ERROR : Failed to copy.\n");
 	}
 	tend = gettime();

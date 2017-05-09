@@ -21,8 +21,8 @@ int main(int argc, char* args[])
 	struct sockaddr_in addr;
 	unsigned int addrLength;
 	struct hostent *server;
-	char sendBuffer[SIZE];
-	char echoBuffer[SIZE];
+	char sendBuffer[SIZE + 1];
+	char echoBuffer[SIZE + 1];
 	char *hostName;
 	unsigned short serverPort;
 	int receivedMessageSize;
@@ -57,7 +57,13 @@ int main(int argc, char* args[])
 			exit(EXIT_FAILURE);
 		}
 
-		memset(sendBuffer, 0, sizeof(sendBuffer));
+		memset(sendBuffer, '\0', sizeof(sendBuffer));
+		memset(echoBuffer, '\0', sizeof(echoBuffer));
+		if (read(sock, echoBuffer, SIZE) <  0) {
+			perror("write() failed\n");
+			exit(EXIT_FAILURE);
+		}
+		printf("%s\n", echoBuffer);
 		memset(echoBuffer, 0, sizeof(echoBuffer));
 		scanf("%s", sendBuffer);
 		if (sendBuffer[0] == EOF) break;
