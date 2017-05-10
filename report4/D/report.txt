@@ -1,0 +1,37 @@
+単方向通信よりスピードがおそくなった(だいたい2/3)
+またserver->clientよりclient->serverの方がおそかった
+
+-----server->client-----
+DataSize: 10001408 Byte
+Time: 18.508838 s
+ThroughPut: 4.322868 Mbps
+
+DataSize: 10001408 Byte
+Time: 16.115615 s
+ThroughPut: 4.964828 Mbps
+
+DataSize: 10001408 Byte
+Time: 16.965249 s
+ThroughPut: 4.716186 Mbps
+
+DataSize: 10001408 Byte
+Time: 19.515759 s
+ThroughPut: 4.099828 Mbps
+
+-----client->server-----
+DataSize: 10001408 Byte
+Time: 21.141387 s
+ThroughPut: 3.784580 Mbps
+
+DataSize: 10001408 Byte
+Time: 19.352707 s
+ThroughPut: 4.134371 Mbps
+
+DataSize: 10001408 Byte
+Time: 20.506529 s
+ThroughPut: 3.901746 Mbps
+
+DataSize: 10001408 Byte
+Time: 19.899449 s
+ThroughPut: 4.020778 Mbps
+
