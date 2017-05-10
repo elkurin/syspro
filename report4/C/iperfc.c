@@ -36,7 +36,6 @@ int main(int argc, char* args[])
 	char echoBuffer[SIZE + 1];
 	char *hostName;
 	unsigned short serverPort;
-	int receivedMessageSize;
 	int sendMessageSize;
 
 	hostName = args[1];
@@ -72,33 +71,13 @@ int main(int argc, char* args[])
 		exit(EXIT_FAILURE);
 	}
 	printf("%s\n", echoBuffer);
-	/*
-	int read_fd = open("foo.txt", O_RDONLY);
-	if (read_fd < 0) {
-		perror("open() failed\n");
-		exit(EXIT_FAILURE);
-	}
-	*/
 
+	//計測開始
 	double tstart = gettime();
 	long long dataSize = 0;
 	while(1) {
 		memset(sendBuffer, '\0', sizeof(sendBuffer));
 		memset(echoBuffer, '\0', sizeof(echoBuffer));
-		/*
-		ssize_t get = read(read_fd, sendBuffer, SIZE);
-		if (get < 0) {
-			perror("read() failed\n");
-			exit(EXIT_FAILURE);
-		} else if (!get) {
-			sendBuffer[0] = EOF;
-			if (write(sock, sendBuffer, SIZE) < 0)  {
-				perror("write() failed\n");
-				exit(EXIT_FAILURE);
-			}
-			break;
-		}
-		*/
 		int i;
 		for (i = 0; i < SIZE; i++) sendBuffer[i] = 'a' + i % 26;
 		dataSize += (long long)SIZE;
@@ -108,31 +87,28 @@ int main(int argc, char* args[])
 			exit(EXIT_FAILURE);
 		}
 		if (dataSize > 1e+7) {
-			sendBuffer[0] = EOF;
+			//1024文字のEOFを送ることでserver側も必ず1文字目にEOFが来るので1文字目の確認だけで終了を読み取れる
+			//これで高速化した
+			memset(sendBuffer, EOF, sizeof(sendBuffer));
 			if (write(sock, sendBuffer, SIZE) < 0) {
 				perror("write() failed\n");
 				exit(EXIT_FAILURE);
 			}
 			break;
 		}
-		/*
-		receivedMessageSize = read(sock, echoBuffer, SIZE);
-		if (receivedMessageSize <  0) {
-			perror("read() failed\n");
-			exit(EXIT_FAILURE);
-		}
-		*/
-		//printf("%s\n", sendBuffer);
 	}
 	printf("Sending finished.\n");
 	memset(echoBuffer, '\0', sizeof(echoBuffer));
+	//serverが受け取り終わったことを確認するためにメッセージを受信
+	//ここの通信ですこしタイムロスがあるが、1+e7に対しては無視できる
 	if (read(sock, echoBuffer, SIZE) <  0) {
 		perror("write() failed\n");
 		exit(EXIT_FAILURE);
 	}
-	printf("%s\n", echoBuffer);
 	double tend = gettime();
-	printf("%ld %f\n", dataSize, tend - tstart);
+	//計測終了
+	printf("%s\n", echoBuffer);
+	printf("DataSize: %lld Byte\nTime: %f s\nThroughPut: %f Mbps\n", dataSize, tend - tstart, dataSize * 8 * 1e-6 / (tend - tstart));
 	close(sock);
 	return 0;
 }

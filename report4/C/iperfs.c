@@ -22,7 +22,6 @@ int main(int argc, char* args[])
 	char echoBuffer[SIZE + 1];
 	unsigned short serverPort;
 	int receivedMessageSize;
-	int sendMessageSize;
 
 	serverPort = atoi(args[1]);
 
@@ -68,17 +67,18 @@ int main(int argc, char* args[])
 			perror("write() failed\n");
 			exit(EXIT_FAILURE);
 		}
-		//printf("%s\n", echoBuffer);
+		//データの分け方がclientとserverで違うことを確認する用
+		//スループット計測時には時間のロスなのでカット
+		//printf("GetSize: %d\n", receivedMessageSize);
+
+		//EOFを受け取ったら終了する
+		//ここですべての文字を確認しているので
+		/*
 		int i, flag = 0;
 		for (i = 0; i < SIZE; i++) if (echoBuffer[i] == EOF) flag = 1;
 		if (flag) break;
-		/*
-		sendMessageSize = write(s, echoBuffer, SIZE);
-		if (sendMessageSize < 0) {
-			perror("write() failed\n");
-			exit(EXIT_FAILURE);
-		}
 		*/
+		if (echoBuffer[0] == EOF) break;
 	}
 	write(s, "Data received. Shutting down...\n", 32);
 	close(s);
