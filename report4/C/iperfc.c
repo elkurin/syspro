@@ -107,7 +107,7 @@ int main(int argc, char* args[])
 			perror("write() failed\n");
 			exit(EXIT_FAILURE);
 		}
-		if (dataSize > 1e+10) {
+		if (dataSize > 1e+7) {
 			sendBuffer[0] = EOF;
 			if (write(sock, sendBuffer, SIZE) < 0) {
 				perror("write() failed\n");
