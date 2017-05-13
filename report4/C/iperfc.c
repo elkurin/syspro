@@ -75,11 +75,9 @@ int main(int argc, char* args[])
 	//計測開始
 	double tstart = gettime();
 	long long dataSize = 0;
+	memset(sendBuffer, 'a', sizeof(sendBuffer));
 	while(1) {
-		memset(sendBuffer, '\0', sizeof(sendBuffer));
 		memset(echoBuffer, '\0', sizeof(echoBuffer));
-		int i;
-		for (i = 0; i < SIZE; i++) sendBuffer[i] = 'a' + i % 26;
 		dataSize += (long long)SIZE;
 		sendMessageSize = write(sock, sendBuffer, SIZE);
 		if (sendMessageSize < 0) {
